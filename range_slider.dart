@@ -581,7 +581,7 @@ class _RenderRangeSlider extends RenderBox {
       _paintTickMarks(canvas, offset);
     }
     _paintValueIndicator(context);
-    _paintThumbs(context);
+    _paintThumbs(context, offset);
   }
 
   /// ---------------------------------------------
@@ -669,13 +669,13 @@ class _RenderRangeSlider extends RenderBox {
   Rect _thumbLowerRect;
   Rect _thumbUpperRect;
 
-  void _paintThumbs(PaintingContext context){
+  void _paintThumbs(PaintingContext context, Offset offset){
     final Offset thumbLowerCenter = new Offset(_thumbLeftPosition, _trackVerticalCenter);
     final Offset thumbUpperCenter = new Offset(_thumbRightPosition, _trackVerticalCenter);
     final double thumbRadius = _thumbRadius;
 
-    _thumbLowerRect = new Rect.fromCircle(center: thumbLowerCenter, radius: thumbRadius);
-    _thumbUpperRect = new Rect.fromCircle(center: thumbUpperCenter, radius: thumbRadius);
+    _thumbLowerRect = new Rect.fromCircle(center: thumbLowerCenter - offset, radius: thumbRadius);
+    _thumbUpperRect = new Rect.fromCircle(center: thumbUpperCenter - offset, radius: thumbRadius);
 
     // Paint the thumbs, via the Theme
     _sliderTheme.thumbShape.paint(
@@ -870,11 +870,12 @@ class _RenderRangeSlider extends RenderBox {
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry){
     if (event is PointerDownEvent && isInteractive){
-      _validateActiveThumb(event.position);
+      _validateActiveThumb(entry.localPosition);
 
       // If a thumb is active, initiates the GestureDrag
       if (_activeThumb != _ActiveThumb.none){
         _drag.addPointer(event);
+        _handleDragStart(new DragStartDetails(globalPosition: event.position));
       }
     }
   }
