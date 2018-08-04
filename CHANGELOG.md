@@ -9,3 +9,7 @@
 ## [0.0.3]
 
 - provision of an example
+
+## [0.0.4]
+
+- typo correction
