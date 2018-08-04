@@ -5,3 +5,7 @@
 ## [0.0.2]
 
 - update of the package name
+
+## [0.0.3]
+
+- provision of an example
