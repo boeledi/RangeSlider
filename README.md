@@ -24,6 +24,11 @@ dependencies:
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.
 
+In your Dart code, to use it:
+```dart
+import 'package:flutter_range_slider/range_slider.dart';
+```
+
 ---
 ## Example
 
