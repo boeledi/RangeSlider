@@ -4,6 +4,9 @@ version: 0.0.1
 author: Didier Boelens<mail@didierboelens.com>
 homepage: https://github.com/boeledi/RangeSlider
 
+environment:
+    sdk: ">=1.19.0 <3.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
