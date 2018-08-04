@@ -26,7 +26,7 @@ You should then run `flutter packages upgrade` or update your packages in Intell
 
 In your Dart code, to use it:
 ```dart
-import 'package:flutter_range_slider/range_slider.dart';
+import 'package:flutter_range_slider/flutter_range_slider.dart';
 ```
 
 ---

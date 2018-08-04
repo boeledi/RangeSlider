@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_range_slider/range_slider.dart';
+import 'package:flutter_range_slider/flutter_range_slider.dart';
 
 void main() => runApp(new MyApp());
 

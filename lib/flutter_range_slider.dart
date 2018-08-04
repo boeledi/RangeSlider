@@ -7,4 +7,4 @@
  */
 library flutter_range_slider;
 
-export 'src/range_slider.dart';
+export 'src/flutter_range_slider.dart';
