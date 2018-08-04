@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:range_slider/range_slider.dart';
+import 'package:flutter_range_slider/range_slider.dart';
 
 void main() => runApp(new MyApp());
 
