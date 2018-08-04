@@ -1,0 +1,21 @@
+name: range_slider
+description: a 2-thumb Material Design range slider.
+version: 0.0.1
+author: Didier Boelens<mail@didierboelens.com>
+homepage: https://github.com/boeledi/RangeSlider
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  # To add assets to your package, add an assets section, like this:
+  # assets:
+  #  - images/a_dot_burr.jpeg
+  #  - images/a_dot_ham.jpeg
+  #

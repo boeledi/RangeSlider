@@ -1,0 +1,17 @@
+# mac system
+.DS_Store
+
+# intellij
+.idea
+
+#dart / flutter
+.dart_tool/
+.packages
+.pub/
+pubspec.lock
+coverage
+__temp_coverage*
+build/
+ios/.generated/
+ios/Flutter/Generated.xcconfig
+ios/Runner/GeneratedPluginRegistrant.*
