@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:math' as math;
 
 typedef RangeSliderCallback(double lowerValue, double upperValue);
+typedef RangeSliderLabelCallback(double division);
 
 /// A Material Design range slider, extension of the original Flutter Slider.
 ///
@@ -67,6 +68,7 @@ class RangeSlider extends StatefulWidget {
   ///
   /// * [lowerValue] determines the currently selected lower value for this RangeSlider.
   /// * [upperValue] determines the currently selected upper value for this RangeSlider.
+  /// * [getDivisionLabel] is called to get custom labels for division points
   /// * [onChanged] is called while the user is selecting a new value ([lowerValue] or [upperValue])
   ///   for the RangeSlider.
   /// * [onChangeStart] is called when the user starts to select a new value ([lowerValue] or [upperValue])
@@ -83,13 +85,14 @@ class RangeSlider extends StatefulWidget {
     this.min: 0.0,
     this.max: 1.0,
     this.divisions,
+    this.getDivisionLabel,
     @required this.lowerValue,
     @required this.upperValue,
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
     this.showValueIndicator: false,
-    this.valueIndicatorMaxDecimals: 1,
+    this.valueIndicatorMaxDecimals: 1
   })  : assert(min != null),
         assert(max != null),
         assert(min <= max),
@@ -139,6 +142,8 @@ class RangeSlider extends StatefulWidget {
   /// the value in the label above the active
   /// thumb
   final int valueIndicatorMaxDecimals;
+
+  final RangeSliderLabelCallback getDivisionLabel;
 
   /// Callback to invoke when the user is changing the
   /// values.
@@ -360,13 +365,14 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
       lowerValue: _unlerp(widget.lowerValue),
       upperValue: _unlerp(widget.upperValue),
       divisions: widget.divisions,
+      getDivisionLabel: widget.getDivisionLabel,
       onChanged: (widget.onChanged != null) ? _handleChanged : null,
       onChangeStart: _handleChangeStart,
       onChangeEnd: _handleChangeEnd,
       sliderTheme: SliderTheme.of(context),
       state: this,
       showValueIndicator: widget.showValueIndicator,
-      valueIndicatorMaxDecimals: widget.valueIndicatorMaxDecimals,
+      valueIndicatorMaxDecimals: widget.valueIndicatorMaxDecimals
     );
   }
 }
@@ -380,13 +386,14 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
     this.lowerValue,
     this.upperValue,
     this.divisions,
+    this.getDivisionLabel,
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
     this.sliderTheme,
     this.state,
     this.showValueIndicator,
-    this.valueIndicatorMaxDecimals,
+    this.valueIndicatorMaxDecimals
   }) : super(key: key);
 
   final _RangeSliderState state;
@@ -397,6 +404,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   final double lowerValue;
   final double upperValue;
   final int divisions;
+  final RangeSliderLabelCallback getDivisionLabel;
   final bool showValueIndicator;
   final int valueIndicatorMaxDecimals;
 
@@ -406,13 +414,14 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       lowerValue: lowerValue,
       upperValue: upperValue,
       divisions: divisions,
+      getDivisionLabel: getDivisionLabel,
       onChanged: onChanged,
       onChangeStart: onChangeStart,
       onChangeEnd: onChangeEnd,
       sliderTheme: sliderTheme,
       state: state,
       showValueIndicator: showValueIndicator,
-      valueIndicatorMaxDecimals: valueIndicatorMaxDecimals,
+      valueIndicatorMaxDecimals: valueIndicatorMaxDecimals
     );
   }
 
@@ -422,12 +431,13 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..lowerValue = lowerValue
       ..upperValue = upperValue
       ..divisions = divisions
+      ..getDivisionLabel = getDivisionLabel
       ..onChanged = onChanged
       ..onChangeStart = onChangeStart
       ..onChangeEnd = onChangeEnd
       ..sliderTheme = sliderTheme
       ..showValueIndicator = showValueIndicator
-      ..valueIndicatorMaxDecimals = valueIndicatorMaxDecimals;
+      ..valueIndicatorMaxDecimals = valueIndicatorMaxDecimals
   }
 }
 
@@ -440,16 +450,18 @@ class _RenderRangeSlider extends RenderBox {
     double lowerValue,
     double upperValue,
     int divisions,
+    RangeSliderLabelCallback getDivisionLabel,
     RangeSliderCallback onChanged,
     RangeSliderCallback onChangeStart,
     RangeSliderCallback onChangeEnd,
     SliderThemeData sliderTheme,
     @required this.state,
     bool showValueIndicator,
-    int valueIndicatorMaxDecimals,
+    int valueIndicatorMaxDecimals
   }) {
     // Initialization
     this.divisions = divisions;
+    this.getDivisionLabel = getDivisionLabel;
     this.lowerValue = lowerValue;
     this.upperValue = upperValue;
     this.onChanged = onChanged;
@@ -507,6 +519,7 @@ class _RenderRangeSlider extends RenderBox {
   double _lowerValue;
   double _upperValue;
   int _divisions;
+  RangeSliderLabelCallback _getDivisionLabel;
   Animation<double> _overlayAnimation;
   Animation<double> _enableAnimation;
   Animation<double> _valueIndicatorAnimation;
@@ -591,6 +604,10 @@ class _RenderRangeSlider extends RenderBox {
     _updateValueIndicatorPainter();
   }
 
+  set getDivisionLabel(RangeSliderLabelCallback value){
+    _getDivisionLabel = value;
+  }
+
   set valueIndicatorMaxDecimals(int value){
     // Skip if no changes
     if (value == _valueIndicatorMaxDecimals){
@@ -637,6 +654,10 @@ class _RenderRangeSlider extends RenderBox {
         break;
     }
     return (showValueIndicator && _showValueIndicator);
+  }
+
+  RangeSliderLabelCallback get getDivisionLabel {
+    return _getDivisionLabel;
   }
 
   // --------------------------------------------
@@ -899,6 +920,13 @@ class _RenderRangeSlider extends RenderBox {
         // as well as convert it to the initial range (min, max)
         value = state.lerp(value);
         textValue = value.toStringAsFixed(_valueIndicatorMaxDecimals);
+        try {
+            if (_getDivisionLabel != null) {
+                textValue = getDivisionLabel[value];
+            }
+        } catch (e) {
+        }
+        
 
         // Adapt the value indicator with the active thumb value
         _valueIndicatorPainter
