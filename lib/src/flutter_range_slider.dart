@@ -437,7 +437,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..onChangeEnd = onChangeEnd
       ..sliderTheme = sliderTheme
       ..showValueIndicator = showValueIndicator
-      ..valueIndicatorMaxDecimals = valueIndicatorMaxDecimals
+      ..valueIndicatorMaxDecimals = valueIndicatorMaxDecimals;
   }
 }
 
@@ -922,7 +922,7 @@ class _RenderRangeSlider extends RenderBox {
         textValue = value.toStringAsFixed(_valueIndicatorMaxDecimals);
         try {
             if (_getDivisionLabel != null) {
-                textValue = getDivisionLabel[value];
+                textValue = getDivisionLabel(value);
             }
         } catch (e) {
         }
