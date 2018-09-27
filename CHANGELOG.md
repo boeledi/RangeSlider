@@ -14,6 +14,6 @@
 
 - typo correction
 
-## [0.0.5]
+## [1.0.0]
 
 - Increase touch area for thumbs

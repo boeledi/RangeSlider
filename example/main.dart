@@ -25,7 +25,7 @@ class RangeSliderSample extends StatefulWidget {
 class _RangeSliderSampleState extends State<RangeSliderSample> {
   // List of RangeSliders to use, together with their parameters
   List<RangeSliderData> rangeSliders;
-  
+
   double _lowerValue = 20.0;
   double _upperValue = 80.0;
 
@@ -64,22 +64,26 @@ class _RangeSliderSampleState extends State<RangeSliderSample> {
                         _upperValue = newUpperValue;
                       });
                     },
-                    onChangeStart: (double startLowerValue, double startUpperValue) {
-                      print('Started with values: $startLowerValue and $startUpperValue');
+                    onChangeStart:
+                        (double startLowerValue, double startUpperValue) {
+                      print(
+                          'Started with values: $startLowerValue and $startUpperValue');
                     },
                     onChangeEnd: (double newLowerValue, double newUpperValue) {
-                      print('Ended with values: $newLowerValue and $newUpperValue');
+                      print(
+                          'Ended with values: $newLowerValue and $newUpperValue');
                     },
                   ),
                 )
                 // Add some space
-                ..add(new SizedBox(height: 24.0),)
+                ..add(
+                  new SizedBox(height: 24.0),
+                )
                 //
                 // Add a series of RangeSliders, built as regular Widgets
                 // each one having some specific customizations
                 //
-                ..addAll(_buildRangeSliders())
-            ),
+                ..addAll(_buildRangeSliders())),
         ),
       ),
     );
@@ -92,18 +96,14 @@ class _RangeSliderSampleState extends State<RangeSliderSample> {
   List<Widget> _buildRangeSliders() {
     List<Widget> children = <Widget>[];
     for (int index = 0; index < rangeSliders.length; index++) {
-      children.add(
-        rangeSliders[index].build(
-          context, 
-          (double lower, double upper) {
-            // adapt the RangeSlider lowerValue and upperValue
-            setState(() {
-              rangeSliders[index].lowerValue = lower;
-              rangeSliders[index].upperValue = upper;
-            });
-          }
-        )
-      );
+      children
+          .add(rangeSliders[index].build(context, (double lower, double upper) {
+        // adapt the RangeSlider lowerValue and upperValue
+        setState(() {
+          rangeSliders[index].lowerValue = lower;
+          rangeSliders[index].upperValue = upper;
+        });
+      }));
       // Add an extra padding at the bottom of each RangeSlider
       children.add(new SizedBox(height: 8.0));
     }
@@ -231,16 +231,16 @@ class RangeSliderData {
               // based on individual definitions
               // (see rangeSliders in _RangeSliderSampleState)
               data: SliderTheme.of(context).copyWith(
-                    overlayColor: overlayColor,
-                    activeTickMarkColor: activeTickMarkColor,
-                    activeTrackColor: activeTrackColor,
-                    inactiveTrackColor: inactiveTrackColor,
-                    thumbColor: thumbColor,
-                    valueIndicatorColor: valueIndicatorColor,
-                    showValueIndicator: showValueIndicator
-                        ? ShowValueIndicator.always
-                        : ShowValueIndicator.onlyForDiscrete,
-                  ),
+                overlayColor: overlayColor,
+                activeTickMarkColor: activeTickMarkColor,
+                activeTrackColor: activeTrackColor,
+                inactiveTrackColor: inactiveTrackColor,
+                thumbColor: thumbColor,
+                valueIndicatorColor: valueIndicatorColor,
+                showValueIndicator: showValueIndicator
+                    ? ShowValueIndicator.always
+                    : ShowValueIndicator.onlyForDiscrete,
+              ),
               child: new RangeSlider(
                 min: min,
                 max: max,
