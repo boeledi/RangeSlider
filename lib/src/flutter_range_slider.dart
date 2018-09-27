@@ -75,6 +75,11 @@ class RangeSlider extends StatefulWidget {
   ///   for the RangeSlider.
   /// * [showValueIndicator] determines whether the RangeSlider should show a "value indicator" when
   ///   the user is dragging one of the 2 thumbs
+  /// * [touchRadiusExpansionRatio] determines the ratio with which to expand
+  ///   the thumb size, to increase (>1) or  decrease (<1) the touch surface of the thumbs.
+  ///   It is advised to set this value such that the touch surface of a thumb
+  ///   becomes at least 40.0 x 40.0. The default thumbs have a radius of 6,
+  ///   so a value of at least 3.33 is advisable in that case.
   /// * [valueIndicatorMaxDecimals] determines the maximum number of decimals to use to display
   ///   the value of the currently dragged thumb, inside the "value indicator"
   /// A fine-grained control of the appearance is achieved using a [SliderThemeData].
@@ -89,6 +94,7 @@ class RangeSlider extends StatefulWidget {
     this.onChangeStart,
     this.onChangeEnd,
     this.showValueIndicator: false,
+    this.touchRadiusExpansionRatio: 1.0,
     this.valueIndicatorMaxDecimals: 1,
   })  : assert(min != null),
         assert(max != null),
@@ -134,6 +140,13 @@ class RangeSlider extends StatefulWidget {
   /// Do we show a label above the active thumb when
   /// the RangeSlider is active ?
   final bool showValueIndicator;
+
+  /// The ratio with which to expand the thumb size, to increase (>1) or
+  /// decrease (<1) the touch surface of the thumbs.
+  /// It is advised to set this value such that the touch surface of a thumb
+  /// becomes at least 40.0 x 40.0. The default thumbs have a radius of 6,
+  /// so a value of at least 3.33 is advisable.
+  final double touchRadiusExpansionRatio;
 
   /// Max number of decimals when displaying
   /// the value in the label above the active
@@ -447,6 +460,7 @@ class _RenderRangeSlider extends RenderBox {
     @required this.state,
     bool showValueIndicator,
     int valueIndicatorMaxDecimals,
+    double touchRadiusExpansionRatio,
   }) {
     // Initialization
     this.divisions = divisions;
@@ -458,6 +472,7 @@ class _RenderRangeSlider extends RenderBox {
     this.sliderTheme = sliderTheme;
     this.showValueIndicator = showValueIndicator;
     this.valueIndicatorMaxDecimals = valueIndicatorMaxDecimals;
+    this._touchRadiusExpansionRatio = touchRadiusExpansionRatio;
 
     // Initialization of the Drag Gesture Recognizer
     _drag = new HorizontalDragGestureRecognizer()
@@ -513,6 +528,7 @@ class _RenderRangeSlider extends RenderBox {
   HorizontalDragGestureRecognizer _drag;
   SliderThemeData _sliderTheme;
   bool _showValueIndicator;
+  double _touchRadiusExpansionRatio;
   int _valueIndicatorMaxDecimals;
   final TextPainter _valueIndicatorPainter = new TextPainter();
 
@@ -1060,14 +1076,21 @@ class _RenderRangeSlider extends RenderBox {
   _ActiveThumb _activeThumb = _ActiveThumb.none;
   _ActiveThumb _previousActiveThumb = _ActiveThumb.none;
 
-  _validateActiveThumb(Offset position){
-    if (_thumbLowerRect.contains(position)){
+  _validateActiveThumb(Offset position) {
+    var _thumbLowerExpandedRect =
+    Rect.fromCircle(center: _thumbLowerRect.centerLeft, radius: _thumbRadius * _touchRadiusExpansionRatio);
+    var _thumbUpperExpandedRect =
+    Rect.fromCircle(center: _thumbUpperRect.centerRight, radius: _thumbRadius * _touchRadiusExpansionRatio);
+
+    if (_thumbLowerExpandedRect.contains(position)) {
       _activeThumb = _ActiveThumb.lowerThumb;
       _minDragValue = 0.0;
-      _maxDragValue = _discretize(_upperValue - _thumbRadius * 2.0 / _trackLength);
-    } else if (_thumbUpperRect.contains(position)){
+      _maxDragValue =
+          _discretize(_upperValue - _thumbRadius * 2.0 / _trackLength);
+    } else if (_thumbUpperExpandedRect.contains(position)) {
       _activeThumb = _ActiveThumb.upperThumb;
-      _minDragValue = _discretize(_lowerValue + _thumbRadius * 2.0 / _trackLength);
+      _minDragValue =
+          _discretize(_lowerValue + _thumbRadius * 2.0 / _trackLength);
       _maxDragValue = 1.0;
     } else {
       _activeThumb = _ActiveThumb.none;

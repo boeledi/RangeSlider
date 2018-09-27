@@ -13,3 +13,7 @@
 ## [0.0.4]
 
 - typo correction
+
+## [0.0.5]
+
+- Increase touch area for thumbs
