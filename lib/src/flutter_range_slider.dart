@@ -75,14 +75,14 @@ class RangeSlider extends StatefulWidget {
   ///   for the RangeSlider.
   /// * [showValueIndicator] determines whether the RangeSlider should show a "value indicator" when
   ///   the user is dragging one of the 2 thumbs
-  /// * [valueIndicatorMaxDecimals] determines the maximum number of decimals to use to display
-  ///   the value of the currently dragged thumb, inside the "value indicator"
-  /// A fine-grained control of the appearance is achieved using a [SliderThemeData].
   /// * [touchRadiusExpansionRatio] determines the ratio with which to expand
   ///   the thumb size, to increase (>1) or  decrease (<1) the touch surface of the thumbs.
   ///   It is advised to set this value such that the touch surface of a thumb
   ///   becomes at least 40.0 x 40.0. The default thumbs have a radius of 6,
   ///   so a value of at least 3.33 is advisable in that case.
+  /// * [valueIndicatorMaxDecimals] determines the maximum number of decimals to use to display
+  ///   the value of the currently dragged thumb, inside the "value indicator"
+  /// A fine-grained control of the appearance is achieved using a [SliderThemeData].
   const RangeSlider({
     Key key,
     this.min: 0.0,
