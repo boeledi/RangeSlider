@@ -94,7 +94,7 @@ class RangeSlider extends StatefulWidget {
     this.onChangeStart,
     this.onChangeEnd,
     this.showValueIndicator: false,
-    this.touchRadiusExpansionRatio: 1.0,
+    this.touchRadiusExpansionRatio: 3.33,
     this.valueIndicatorMaxDecimals: 1,
   })  : assert(min != null),
         assert(max != null),
@@ -387,6 +387,7 @@ class _RangeSliderState extends State<RangeSlider>
       state: this,
       showValueIndicator: widget.showValueIndicator,
       valueIndicatorMaxDecimals: widget.valueIndicatorMaxDecimals,
+      touchRadiusExpansionRatio: widget.touchRadiusExpansionRatio,
     );
   }
 }
@@ -407,6 +408,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
     this.state,
     this.showValueIndicator,
     this.valueIndicatorMaxDecimals,
+    this.touchRadiusExpansionRatio,
   }) : super(key: key);
 
   final _RangeSliderState state;
@@ -419,7 +421,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   final int divisions;
   final bool showValueIndicator;
   final int valueIndicatorMaxDecimals;
-
+  final double touchRadiusExpansionRatio;
   @override
   RenderObject createRenderObject(BuildContext context) {
     return new _RenderRangeSlider(
@@ -433,6 +435,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       state: state,
       showValueIndicator: showValueIndicator,
       valueIndicatorMaxDecimals: valueIndicatorMaxDecimals,
+      touchRadiusExpansionRatio: touchRadiusExpansionRatio,
     );
   }
 
@@ -448,7 +451,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..onChangeEnd = onChangeEnd
       ..sliderTheme = sliderTheme
       ..showValueIndicator = showValueIndicator
-      ..valueIndicatorMaxDecimals = valueIndicatorMaxDecimals;
+      ..valueIndicatorMaxDecimals = valueIndicatorMaxDecimals
+      ..touchRadiusExpansionRatio = touchRadiusExpansionRatio;
   }
 }
 
@@ -555,6 +559,11 @@ class _RenderRangeSlider extends RenderBox {
   set upperValue(double value) {
     assert(value != null && value >= 0.0 && value <= 1.0);
     _upperValue = _discretize(value);
+  }
+
+  set touchRadiusExpansionRatio(double value) {
+    assert(value != null && value >= 0.1);
+    _touchRadiusExpansionRatio = value;
   }
 
   set divisions(int value) {

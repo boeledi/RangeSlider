@@ -17,3 +17,7 @@
 ## [1.0.0]
 
 - Increase touch area for thumbs
+
+## [1.0.1]
+
+- Bug fix
