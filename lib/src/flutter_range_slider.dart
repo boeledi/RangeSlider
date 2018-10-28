@@ -1126,15 +1126,20 @@ class _RenderRangeSlider extends RenderBox {
         center: _thumbUpperRect.centerRight,
         radius: _thumbRadius * _touchRadiusExpansionRatio);
 
+    double divisionOffset = (
+      _divisions != null ?
+      _discretize(1.0 / _divisions) : (_thumbRadius * 2.0) / _trackLength
+    );
+
     if (_thumbLowerExpandedRect.contains(position)) {
       _activeThumb = _ActiveThumb.lowerThumb;
       _minDragValue = 0.0;
       _maxDragValue =
-          _discretize(_upperValue - _thumbRadius * 2.0 / _trackLength);
+          _discretize(_upperValue - divisionOffset);
     } else if (_thumbUpperExpandedRect.contains(position)) {
       _activeThumb = _ActiveThumb.upperThumb;
       _minDragValue =
-          _discretize(_lowerValue + _thumbRadius * 2.0 / _trackLength);
+          _discretize(_lowerValue + divisionOffset);
       _maxDragValue = 1.0;
     } else {
       _activeThumb = _ActiveThumb.none;
