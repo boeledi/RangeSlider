@@ -1,0 +1,15 @@
+name: example
+description: Example of Range Slider
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_range_slider:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
