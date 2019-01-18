@@ -820,9 +820,13 @@ class _RenderRangeSlider extends RenderBox {
 
     // Define the paint colors for both unselected and selected track segments
     Paint unselectedTrackPaint = new Paint()
-      ..color = _sliderTheme.inactiveTrackColor;
+      ..color = isInteractive
+          ? _sliderTheme.inactiveTrackColor
+          : _sliderTheme.disabledInactiveTrackColor;
     Paint selectedTrackPaint = new Paint()
-      ..color = _sliderTheme.activeTrackColor;
+      ..color = isInteractive
+          ? _sliderTheme.activeTrackColor
+          : _sliderTheme.disabledActiveTrackColor;
 
     // Draw the track
     if (_lowerValue > 0.0) {
@@ -880,8 +884,13 @@ class _RenderRangeSlider extends RenderBox {
       final Offset center =
           new Offset(left + _tickRadius, _trackTop + _tickRadius);
 
-      canvas.drawCircle(center, _tickRadius,
-          new Paint()..color = _sliderTheme.activeTickMarkColor);
+      canvas.drawCircle(
+          center,
+          _tickRadius,
+          new Paint()
+            ..color = isInteractive
+                ? _sliderTheme.activeTickMarkColor
+                : _sliderTheme.disabledActiveTickMarkColor);
     }
   }
 
