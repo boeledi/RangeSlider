@@ -21,3 +21,10 @@
 ## [1.0.1]
 
 - Bug fix
+
+## [1.1.0]
+
+- add support to disabled theme colors
+- prevent thumbs to overlap
+- alignment of the edges [#11]
+- added an externalization to format the value indicator

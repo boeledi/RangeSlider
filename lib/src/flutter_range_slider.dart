@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:math' as math;
 
 typedef RangeSliderCallback(double lowerValue, double upperValue);
+typedef RangeSliderValueIndicatorFormatter(int index, double value);
 
 /// A Material Design range slider, extension of the original Flutter Slider.
 ///
@@ -82,6 +83,8 @@ class RangeSlider extends StatefulWidget {
   ///   so a value of at least 3.33 is advisable in that case.
   /// * [valueIndicatorMaxDecimals] determines the maximum number of decimals to use to display
   ///   the value of the currently dragged thumb, inside the "value indicator"
+  /// * [valueIndicatorFormatter] if defined, is called to format the text to be displayed
+  ///   inside a "value indicator"
   /// A fine-grained control of the appearance is achieved using a [SliderThemeData].
   const RangeSlider({
     Key key,
@@ -96,6 +99,7 @@ class RangeSlider extends StatefulWidget {
     this.showValueIndicator: false,
     this.touchRadiusExpansionRatio: 3.33,
     this.valueIndicatorMaxDecimals: 1,
+    this.valueIndicatorFormatter,
   })  : assert(min != null),
         assert(max != null),
         assert(min <= max),
@@ -152,6 +156,33 @@ class RangeSlider extends StatefulWidget {
   /// the value in the label above the active
   /// thumb
   final int valueIndicatorMaxDecimals;
+
+  /// External function to format the value to be displayed in the label above the
+  /// active thumb. Ignored if null.
+  ///
+  /// [index] gives the index of the value indicator: 0: lower value, 1: upper value
+  ///
+  /// ## Sample Code
+  /// ```dart
+  /// new RangeSlider(
+  ///   lowerValue: _lowerValue,
+  ///   upperValue: _upperValue,
+  ///   min: 1.0,
+  ///   max: 10.0,
+  ///   divisions: 10,
+  ///   valueIndicatorFormatter: (int index, double value){
+  ///     String threeDecimals = value.toStringAsFixed(3);
+  ///     return '$threeDecimals m';
+  ///   },
+  ///   onChanged: (double newLowerValue, double newUpperValue) {
+  ///     setState(() {
+  ///       _lowerValue = newLowerValue;
+  ///       _upperValue = newUpperValue;
+  ///     });
+  ///   },
+  /// )
+  /// ```
+  final RangeSliderValueIndicatorFormatter valueIndicatorFormatter;
 
   /// Callback to invoke when the user is changing the
   /// values.
@@ -388,6 +419,7 @@ class _RangeSliderState extends State<RangeSlider>
       showValueIndicator: widget.showValueIndicator,
       valueIndicatorMaxDecimals: widget.valueIndicatorMaxDecimals,
       touchRadiusExpansionRatio: widget.touchRadiusExpansionRatio,
+      valueIndicatorFormatter: widget.valueIndicatorFormatter,
     );
   }
 }
@@ -409,6 +441,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
     this.showValueIndicator,
     this.valueIndicatorMaxDecimals,
     this.touchRadiusExpansionRatio,
+    this.valueIndicatorFormatter,
   }) : super(key: key);
 
   final _RangeSliderState state;
@@ -422,6 +455,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   final bool showValueIndicator;
   final int valueIndicatorMaxDecimals;
   final double touchRadiusExpansionRatio;
+  final RangeSliderValueIndicatorFormatter valueIndicatorFormatter;
+
   @override
   RenderObject createRenderObject(BuildContext context) {
     return new _RenderRangeSlider(
@@ -436,6 +471,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       showValueIndicator: showValueIndicator,
       valueIndicatorMaxDecimals: valueIndicatorMaxDecimals,
       touchRadiusExpansionRatio: touchRadiusExpansionRatio,
+      valueIndicatorFormatter: valueIndicatorFormatter,
     );
   }
 
@@ -452,7 +488,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..sliderTheme = sliderTheme
       ..showValueIndicator = showValueIndicator
       ..valueIndicatorMaxDecimals = valueIndicatorMaxDecimals
-      ..touchRadiusExpansionRatio = touchRadiusExpansionRatio;
+      ..touchRadiusExpansionRatio = touchRadiusExpansionRatio
+      ..valueIndicatorFormatter = valueIndicatorFormatter;
   }
 }
 
@@ -473,6 +510,7 @@ class _RenderRangeSlider extends RenderBox {
     bool showValueIndicator,
     int valueIndicatorMaxDecimals,
     double touchRadiusExpansionRatio,
+    RangeSliderValueIndicatorFormatter valueIndicatorFormatter,
   }) {
     // Initialization
     this.divisions = divisions;
@@ -485,6 +523,7 @@ class _RenderRangeSlider extends RenderBox {
     this.showValueIndicator = showValueIndicator;
     this.valueIndicatorMaxDecimals = valueIndicatorMaxDecimals;
     this._touchRadiusExpansionRatio = touchRadiusExpansionRatio;
+    this.valueIndicatorFormatter = valueIndicatorFormatter;
 
     // Initialization of the Drag Gesture Recognizer
     _drag = new HorizontalDragGestureRecognizer()
@@ -516,7 +555,7 @@ class _RenderRangeSlider extends RenderBox {
   // Global Constants. See Material.io
   // -------------------------------------------------
   static const double _overlayRadius = 16.0;
-  static const double _overlayDiameter = _overlayRadius * 2.0;
+  static const double _overlayDiameter = _overlayRadius;
   static const double _trackHeight = 2.0;
   static const double _preferredTrackWidth = 144.0;
   static const double _preferredTotalWidth =
@@ -544,6 +583,7 @@ class _RenderRangeSlider extends RenderBox {
   double _touchRadiusExpansionRatio;
   int _valueIndicatorMaxDecimals;
   final TextPainter _valueIndicatorPainter = new TextPainter();
+  RangeSliderValueIndicatorFormatter _valueIndicatorFormatter;
 
   // --------------------------------------------------
   // Setters
@@ -635,6 +675,10 @@ class _RenderRangeSlider extends RenderBox {
 
     // Force a repaint
     markNeedsPaint();
+  }
+
+  set valueIndicatorFormatter(RangeSliderValueIndicatorFormatter formatter) {
+    _valueIndicatorFormatter = formatter;
   }
 
   // ----------------------------------------------
@@ -729,7 +773,9 @@ class _RenderRangeSlider extends RenderBox {
   void performResize() {
     size = new Size(
       constraints.hasBoundedWidth ? constraints.maxWidth : _preferredTotalWidth,
-      constraints.hasBoundedHeight ? constraints.maxHeight : _overlayDiameter,
+      constraints.hasBoundedHeight
+          ? constraints.maxHeight
+          : _overlayDiameter * 2.0,
     );
   }
 
@@ -820,9 +866,13 @@ class _RenderRangeSlider extends RenderBox {
 
     // Define the paint colors for both unselected and selected track segments
     Paint unselectedTrackPaint = new Paint()
-      ..color = _sliderTheme.inactiveTrackColor;
+      ..color = isInteractive
+          ? _sliderTheme.inactiveTrackColor
+          : _sliderTheme.disabledInactiveTrackColor;
     Paint selectedTrackPaint = new Paint()
-      ..color = _sliderTheme.activeTrackColor;
+      ..color = isInteractive
+          ? _sliderTheme.activeTrackColor
+          : _sliderTheme.disabledActiveTrackColor;
 
     // Draw the track
     if (_lowerValue > 0.0) {
@@ -880,8 +930,13 @@ class _RenderRangeSlider extends RenderBox {
       final Offset center =
           new Offset(left + _tickRadius, _trackTop + _tickRadius);
 
-      canvas.drawCircle(center, _tickRadius,
-          new Paint()..color = _sliderTheme.activeTickMarkColor);
+      canvas.drawCircle(
+          center,
+          _tickRadius,
+          new Paint()
+            ..color = isInteractive
+                ? _sliderTheme.activeTickMarkColor
+                : _sliderTheme.disabledActiveTickMarkColor);
     }
   }
 
@@ -943,6 +998,7 @@ class _RenderRangeSlider extends RenderBox {
         Offset thumbCenter;
         double value;
         String textValue;
+        int index = 0;
 
         if (_previousActiveThumb == _ActiveThumb.lowerThumb) {
           thumbCenter = new Offset(_thumbLeftPosition, _trackVerticalCenter);
@@ -950,12 +1006,21 @@ class _RenderRangeSlider extends RenderBox {
         } else {
           thumbCenter = new Offset(_thumbRightPosition, _trackVerticalCenter);
           value = _upperValue;
+          index = 1;
         }
 
         // Adapt the value to be displayed to the max number of decimals
         // as well as convert it to the initial range (min, max)
         value = state.lerp(value);
-        textValue = value.toStringAsFixed(_valueIndicatorMaxDecimals);
+
+        // Invoke the external value indicator formatter, if any and valid
+        if (_valueIndicatorFormatter is RangeSliderValueIndicatorFormatter) {
+          try {
+            textValue = _valueIndicatorFormatter(index, value);
+          } catch (_) {}
+        }
+        textValue =
+            textValue ?? value.toStringAsFixed(_valueIndicatorMaxDecimals);
 
         // Adapt the value indicator with the active thumb value
         _valueIndicatorPainter
@@ -1125,16 +1190,17 @@ class _RenderRangeSlider extends RenderBox {
     var _thumbUpperExpandedRect = Rect.fromCircle(
         center: _thumbUpperRect.centerRight,
         radius: _thumbRadius * _touchRadiusExpansionRatio);
+    double divisionOffset = (_divisions != null)
+        ? _discretize(1.0 / _divisions)
+        : (_thumbRadius * 2.0) / _trackLength;
 
     if (_thumbLowerExpandedRect.contains(position)) {
       _activeThumb = _ActiveThumb.lowerThumb;
       _minDragValue = 0.0;
-      _maxDragValue =
-          _discretize(_upperValue - _thumbRadius * 2.0 / _trackLength);
+      _maxDragValue = _discretize(_upperValue - divisionOffset);
     } else if (_thumbUpperExpandedRect.contains(position)) {
       _activeThumb = _ActiveThumb.upperThumb;
-      _minDragValue =
-          _discretize(_lowerValue + _thumbRadius * 2.0 / _trackLength);
+      _minDragValue = _discretize(_lowerValue + divisionOffset);
       _maxDragValue = 1.0;
     } else {
       _activeThumb = _ActiveThumb.none;

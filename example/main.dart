@@ -28,6 +28,8 @@ class _RangeSliderSampleState extends State<RangeSliderSample> {
 
   double _lowerValue = 20.0;
   double _upperValue = 80.0;
+  double _lowerValueFormatter = 20.0;
+  double _upperValueFormatter = 20.0;
 
   @override
   void initState() {
@@ -83,7 +85,48 @@ class _RangeSliderSampleState extends State<RangeSliderSample> {
                 // Add a series of RangeSliders, built as regular Widgets
                 // each one having some specific customizations
                 //
-                ..addAll(_buildRangeSliders())),
+                ..addAll(_buildRangeSliders())
+
+                //
+                // Add a disabled version
+                //
+                ..add(
+                  new RangeSlider(
+                      min: 0.0,
+                      max: 100.0,
+                      lowerValue: 25.0,
+                      upperValue: 50.0,
+                      divisions: 5,
+                      showValueIndicator: true,
+                      valueIndicatorMaxDecimals: 1,
+                      onChanged: null,
+                    ),
+                )
+
+                //
+                // Add custom value formatter
+                //
+                ..add(
+                  new RangeSlider(
+                      min: 0.0,
+                      max: 100.0,
+                      lowerValue: _lowerValueFormatter,
+                      upperValue: _upperValueFormatter,
+                      divisions: 10,
+                      showValueIndicator: true,
+                      valueIndicatorFormatter: (int index, double value){
+                        String twoDecimals = value.toStringAsFixed(2);
+                        return '$twoDecimals mm';
+                      },
+                      onChanged: (double newLowerValue, double newUpperValue) {
+                        setState(() {
+                          _lowerValueFormatter = newLowerValue;
+                          _upperValueFormatter = newUpperValue;
+                        });
+                      },
+                    ),
+                ),
+          ),
         ),
       ),
     );

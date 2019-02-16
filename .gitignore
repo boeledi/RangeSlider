@@ -1,8 +1,9 @@
 # mac system
 .DS_Store
 
-# intellij
+# intellij & VSCode
 .idea
+.vscode
 
 #dart / flutter
 .dart_tool/
