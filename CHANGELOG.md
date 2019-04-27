@@ -28,3 +28,7 @@
 - prevent thumbs to overlap
 - alignment of the edges [#11]
 - added an externalization to format the value indicator
+
+## [1.2.0] - 2019-04-27
+
+- compatibility with version 1.5.7+
