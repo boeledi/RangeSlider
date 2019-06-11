@@ -32,3 +32,7 @@
 ## [1.2.0] - 2019-04-27
 
 - compatibility with version 1.5.7+
+
+## [1.3.0] - 2019-06-11
+
+- fix [#19] - support for SliderTheme.trackHeight

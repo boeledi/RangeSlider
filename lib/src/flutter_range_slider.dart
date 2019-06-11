@@ -1,12 +1,13 @@
-// Copyright 2018 Didier Boelens. All rights reserved.
+// Copyright 2018-2019 Didier Boelens. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:math' as math;
 
 typedef RangeSliderCallback(double lowerValue, double upperValue);
 typedef RangeSliderValueIndicatorFormatter(int index, double value);
@@ -405,13 +406,19 @@ class _RangeSliderState extends State<RangeSlider>
     }
   }
 
-  static const double _defaultTrackHeight = 2;
-  static const SliderTrackShape _defaultTrackShape = RectangularSliderTrackShape();
-  static const SliderTickMarkShape _defaultTickMarkShape = RoundSliderTickMarkShape();
-  static const SliderComponentShape _defaultOverlayShape = RoundSliderOverlayShape();
-  static const SliderComponentShape _defaultThumbShape = RoundSliderThumbShape();
-  static const SliderComponentShape _defaultValueIndicatorShape = PaddleSliderValueIndicatorShape();
-  static const ShowValueIndicator _defaultShowValueIndicator = ShowValueIndicator.onlyForDiscrete;
+  static const double _defaultTrackHeight = 2.0;
+  static const SliderTrackShape _defaultTrackShape =
+      RectangularSliderTrackShape();
+  static const SliderTickMarkShape _defaultTickMarkShape =
+      RoundSliderTickMarkShape();
+  static const SliderComponentShape _defaultOverlayShape =
+      RoundSliderOverlayShape();
+  static const SliderComponentShape _defaultThumbShape =
+      RoundSliderThumbShape();
+  static const SliderComponentShape _defaultValueIndicatorShape =
+      PaddleSliderValueIndicatorShape();
+  static const ShowValueIndicator _defaultShowValueIndicator =
+      ShowValueIndicator.onlyForDiscrete;
 
   @override
   Widget build(BuildContext context) {
@@ -423,27 +430,42 @@ class _RangeSliderState extends State<RangeSlider>
     //
     sliderTheme = sliderTheme.copyWith(
       trackHeight: sliderTheme.trackHeight ?? _defaultTrackHeight,
-      activeTrackColor: sliderTheme.activeTrackColor ?? theme.colorScheme.primary,
-      inactiveTrackColor: sliderTheme.inactiveTrackColor ?? theme.colorScheme.primary.withOpacity(0.24),
-      disabledActiveTrackColor: sliderTheme.disabledActiveTrackColor ?? theme.colorScheme.onSurface.withOpacity(0.32),
-      disabledInactiveTrackColor: sliderTheme.disabledInactiveTrackColor ?? theme.colorScheme.onSurface.withOpacity(0.12),
-      activeTickMarkColor: sliderTheme.activeTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.54),
-      inactiveTickMarkColor: sliderTheme.inactiveTickMarkColor ?? theme.colorScheme.primary.withOpacity(0.54),
-      disabledActiveTickMarkColor: sliderTheme.disabledActiveTickMarkColor ?? theme.colorScheme.onPrimary.withOpacity(0.12),
-      disabledInactiveTickMarkColor: sliderTheme.disabledInactiveTickMarkColor ?? theme.colorScheme.onSurface.withOpacity(0.12),
+      activeTrackColor:
+          sliderTheme.activeTrackColor ?? theme.colorScheme.primary,
+      inactiveTrackColor: sliderTheme.inactiveTrackColor ??
+          theme.colorScheme.primary.withOpacity(0.24),
+      disabledActiveTrackColor: sliderTheme.disabledActiveTrackColor ??
+          theme.colorScheme.onSurface.withOpacity(0.32),
+      disabledInactiveTrackColor: sliderTheme.disabledInactiveTrackColor ??
+          theme.colorScheme.onSurface.withOpacity(0.12),
+      activeTickMarkColor: sliderTheme.activeTickMarkColor ??
+          theme.colorScheme.onPrimary.withOpacity(0.54),
+      inactiveTickMarkColor: sliderTheme.inactiveTickMarkColor ??
+          theme.colorScheme.primary.withOpacity(0.54),
+      disabledActiveTickMarkColor: sliderTheme.disabledActiveTickMarkColor ??
+          theme.colorScheme.onPrimary.withOpacity(0.12),
+      disabledInactiveTickMarkColor:
+          sliderTheme.disabledInactiveTickMarkColor ??
+              theme.colorScheme.onSurface.withOpacity(0.12),
       thumbColor: sliderTheme.thumbColor ?? theme.colorScheme.primary,
-      disabledThumbColor: sliderTheme.disabledThumbColor ?? theme.colorScheme.onSurface.withOpacity(0.38),
-      overlayColor: sliderTheme.overlayColor ?? theme.colorScheme.primary.withOpacity(0.12),
-      valueIndicatorColor: sliderTheme.valueIndicatorColor ?? theme.colorScheme.primary,
+      disabledThumbColor: sliderTheme.disabledThumbColor ??
+          theme.colorScheme.onSurface.withOpacity(0.38),
+      overlayColor: sliderTheme.overlayColor ??
+          theme.colorScheme.primary.withOpacity(0.12),
+      valueIndicatorColor:
+          sliderTheme.valueIndicatorColor ?? theme.colorScheme.primary,
       trackShape: sliderTheme.trackShape ?? _defaultTrackShape,
       tickMarkShape: sliderTheme.tickMarkShape ?? _defaultTickMarkShape,
       thumbShape: sliderTheme.thumbShape ?? _defaultThumbShape,
       overlayShape: sliderTheme.overlayShape ?? _defaultOverlayShape,
-      valueIndicatorShape: sliderTheme.valueIndicatorShape ?? _defaultValueIndicatorShape,
-      showValueIndicator: sliderTheme.showValueIndicator ?? _defaultShowValueIndicator,
-      valueIndicatorTextStyle: sliderTheme.valueIndicatorTextStyle ?? theme.textTheme.body2.copyWith(
-        color: theme.colorScheme.onPrimary,
-      ),
+      valueIndicatorShape:
+          sliderTheme.valueIndicatorShape ?? _defaultValueIndicatorShape,
+      showValueIndicator:
+          sliderTheme.showValueIndicator ?? _defaultShowValueIndicator,
+      valueIndicatorTextStyle: sliderTheme.valueIndicatorTextStyle ??
+          theme.textTheme.body2.copyWith(
+            color: theme.colorScheme.onPrimary,
+          ),
     );
 
     return new _RangeSliderRenderObjectWidget(
@@ -595,11 +617,9 @@ class _RenderRangeSlider extends RenderBox {
   // -------------------------------------------------
   static const double _overlayRadius = 16.0;
   static const double _overlayDiameter = _overlayRadius;
-  static const double _trackHeight = 2.0;
   static const double _preferredTrackWidth = 144.0;
   static const double _preferredTotalWidth =
       _preferredTrackWidth + 2 * _overlayDiameter;
-  static const double _tickRadius = _trackHeight / 2.0;
   static final Tween<double> _overlayRadiusTween =
       new Tween<double>(begin: 0.0, end: _overlayRadius);
 
@@ -890,7 +910,7 @@ class _RenderRangeSlider extends RenderBox {
   double _thumbRightPosition;
 
   void _paintTrack(Canvas canvas, Offset offset) {
-    final double trackRadius = _trackHeight / 2.0;
+    final double trackRadius = _sliderTheme.trackHeight / 2.0;
 
     _trackLength = size.width - 2 * _overlayDiameter;
     _trackVerticalCenter = offset.dy + (size.height) / 2.0;
@@ -962,17 +982,18 @@ class _RenderRangeSlider extends RenderBox {
   // ---------------------------------------------
   void _paintTickMarks(Canvas canvas, Offset offset) {
     final double trackWidth = _trackRight - _trackLeft;
-    final double dx = (trackWidth - _trackHeight) / _divisions;
+    final double dx = (trackWidth - _sliderTheme.trackHeight) / _divisions;
+    final double _tickRadius = (_sliderTheme.trackHeight / 2.0).clamp(1.0, 2.0);
+    final double _tickOffset = (_sliderTheme.trackHeight - _tickRadius) / 2.0;
 
     for (int i = 0; i <= _divisions; i++) {
       final double left = _trackLeft + i * dx;
-      final Offset center =
-          new Offset(left + _tickRadius, _trackTop + _tickRadius);
+      final Offset center = Offset(left + _tickOffset, _trackTop + _tickOffset + (_sliderTheme.trackHeight > 2.0 ? 1.0 : 0.0));
 
       canvas.drawCircle(
           center,
           _tickRadius,
-          new Paint()
+          Paint()
             ..color = isInteractive
                 ? _sliderTheme.activeTickMarkColor
                 : _sliderTheme.disabledActiveTickMarkColor);

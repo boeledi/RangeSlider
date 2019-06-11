@@ -278,6 +278,7 @@ class RangeSliderData {
                 activeTickMarkColor: activeTickMarkColor,
                 activeTrackColor: activeTrackColor,
                 inactiveTrackColor: inactiveTrackColor,
+                //trackHeight: 8.0,
                 thumbColor: thumbColor,
                 valueIndicatorColor: valueIndicatorColor,
                 showValueIndicator: showValueIndicator
