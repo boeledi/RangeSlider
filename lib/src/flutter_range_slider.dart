@@ -91,6 +91,7 @@ class RangeSlider extends StatefulWidget {
     Key key,
     this.min: 0.0,
     this.max: 1.0,
+    this.allowThumbOverlap,
     this.divisions,
     @required this.lowerValue,
     @required this.upperValue,
@@ -141,6 +142,9 @@ class RangeSlider extends StatefulWidget {
   /// If null, the slider is continuous,
   /// otherwise discrete
   final int divisions;
+
+  /// Flag to determine if the thumbs may overlap (showing the same value)
+  final bool allowThumbOverlap;
 
   /// Do we show a label above the active thumb when
   /// the RangeSlider is active ?
@@ -308,10 +312,8 @@ class RangeSlider extends StatefulWidget {
   }
 }
 
-class _RangeSliderState extends State<RangeSlider>
-    with TickerProviderStateMixin {
-  static const Duration kEnableAnimationDuration =
-      const Duration(milliseconds: 75);
+class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin {
+  static const Duration kEnableAnimationDuration = const Duration(milliseconds: 75);
   static const Duration kValueIndicatorAnimationDuration =
       const Duration(milliseconds: 100);
 
@@ -407,14 +409,10 @@ class _RangeSliderState extends State<RangeSlider>
   }
 
   static const double _defaultTrackHeight = 2.0;
-  static const SliderTrackShape _defaultTrackShape =
-      RectangularSliderTrackShape();
-  static const SliderTickMarkShape _defaultTickMarkShape =
-      RoundSliderTickMarkShape();
-  static const SliderComponentShape _defaultOverlayShape =
-      RoundSliderOverlayShape();
-  static const SliderComponentShape _defaultThumbShape =
-      RoundSliderThumbShape();
+  static const SliderTrackShape _defaultTrackShape = RectangularSliderTrackShape();
+  static const SliderTickMarkShape _defaultTickMarkShape = RoundSliderTickMarkShape();
+  static const SliderComponentShape _defaultOverlayShape = RoundSliderOverlayShape();
+  static const SliderComponentShape _defaultThumbShape = RoundSliderThumbShape();
   static const SliderComponentShape _defaultValueIndicatorShape =
       PaddleSliderValueIndicatorShape();
   static const ShowValueIndicator _defaultShowValueIndicator =
@@ -430,10 +428,9 @@ class _RangeSliderState extends State<RangeSlider>
     //
     sliderTheme = sliderTheme.copyWith(
       trackHeight: sliderTheme.trackHeight ?? _defaultTrackHeight,
-      activeTrackColor:
-          sliderTheme.activeTrackColor ?? theme.colorScheme.primary,
-      inactiveTrackColor: sliderTheme.inactiveTrackColor ??
-          theme.colorScheme.primary.withOpacity(0.24),
+      activeTrackColor: sliderTheme.activeTrackColor ?? theme.colorScheme.primary,
+      inactiveTrackColor:
+          sliderTheme.inactiveTrackColor ?? theme.colorScheme.primary.withOpacity(0.24),
       disabledActiveTrackColor: sliderTheme.disabledActiveTrackColor ??
           theme.colorScheme.onSurface.withOpacity(0.32),
       disabledInactiveTrackColor: sliderTheme.disabledInactiveTrackColor ??
@@ -444,24 +441,20 @@ class _RangeSliderState extends State<RangeSlider>
           theme.colorScheme.primary.withOpacity(0.54),
       disabledActiveTickMarkColor: sliderTheme.disabledActiveTickMarkColor ??
           theme.colorScheme.onPrimary.withOpacity(0.12),
-      disabledInactiveTickMarkColor:
-          sliderTheme.disabledInactiveTickMarkColor ??
-              theme.colorScheme.onSurface.withOpacity(0.12),
+      disabledInactiveTickMarkColor: sliderTheme.disabledInactiveTickMarkColor ??
+          theme.colorScheme.onSurface.withOpacity(0.12),
       thumbColor: sliderTheme.thumbColor ?? theme.colorScheme.primary,
-      disabledThumbColor: sliderTheme.disabledThumbColor ??
-          theme.colorScheme.onSurface.withOpacity(0.38),
-      overlayColor: sliderTheme.overlayColor ??
-          theme.colorScheme.primary.withOpacity(0.12),
-      valueIndicatorColor:
-          sliderTheme.valueIndicatorColor ?? theme.colorScheme.primary,
+      disabledThumbColor:
+          sliderTheme.disabledThumbColor ?? theme.colorScheme.onSurface.withOpacity(0.38),
+      overlayColor:
+          sliderTheme.overlayColor ?? theme.colorScheme.primary.withOpacity(0.12),
+      valueIndicatorColor: sliderTheme.valueIndicatorColor ?? theme.colorScheme.primary,
       trackShape: sliderTheme.trackShape ?? _defaultTrackShape,
       tickMarkShape: sliderTheme.tickMarkShape ?? _defaultTickMarkShape,
       thumbShape: sliderTheme.thumbShape ?? _defaultThumbShape,
       overlayShape: sliderTheme.overlayShape ?? _defaultOverlayShape,
-      valueIndicatorShape:
-          sliderTheme.valueIndicatorShape ?? _defaultValueIndicatorShape,
-      showValueIndicator:
-          sliderTheme.showValueIndicator ?? _defaultShowValueIndicator,
+      valueIndicatorShape: sliderTheme.valueIndicatorShape ?? _defaultValueIndicatorShape,
+      showValueIndicator: sliderTheme.showValueIndicator ?? _defaultShowValueIndicator,
       valueIndicatorTextStyle: sliderTheme.valueIndicatorTextStyle ??
           theme.textTheme.body2.copyWith(
             color: theme.colorScheme.onPrimary,
@@ -537,8 +530,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-      BuildContext context, _RenderRangeSlider renderObject) {
+  void updateRenderObject(BuildContext context, _RenderRangeSlider renderObject) {
     renderObject
       ..lowerValue = lowerValue
       ..upperValue = upperValue
@@ -563,6 +555,7 @@ class _RenderRangeSlider extends RenderBox {
     double lowerValue,
     double upperValue,
     int divisions,
+    bool allowThumbOverlap,
     RangeSliderCallback onChanged,
     RangeSliderCallback onChangeStart,
     RangeSliderCallback onChangeEnd,
@@ -575,6 +568,7 @@ class _RenderRangeSlider extends RenderBox {
   }) {
     // Initialization
     this.divisions = divisions;
+    this._allowThumbOverlap = allowThumbOverlap;
     this.lowerValue = lowerValue;
     this.upperValue = upperValue;
     this.onChanged = onChanged;
@@ -618,8 +612,7 @@ class _RenderRangeSlider extends RenderBox {
   static const double _overlayRadius = 16.0;
   static const double _overlayDiameter = _overlayRadius;
   static const double _preferredTrackWidth = 144.0;
-  static const double _preferredTotalWidth =
-      _preferredTrackWidth + 2 * _overlayDiameter;
+  static const double _preferredTotalWidth = _preferredTrackWidth + 2 * _overlayDiameter;
   static final Tween<double> _overlayRadiusTween =
       new Tween<double>(begin: 0.0, end: _overlayRadius);
 
@@ -633,6 +626,7 @@ class _RenderRangeSlider extends RenderBox {
   double _lowerValue;
   double _upperValue;
   int _divisions;
+  bool _allowThumbOverlap;
   Animation<double> _overlayAnimation;
   Animation<double> _enableAnimation;
   Animation<double> _valueIndicatorAnimation;
@@ -749,8 +743,8 @@ class _RenderRangeSlider extends RenderBox {
   // Obtain the radius of a thumb from the Theme
   // ----------------------------------------------
   double get _thumbRadius {
-    final Size preferredSize = _sliderTheme.thumbShape
-        .getPreferredSize(isInteractive, (_divisions != null));
+    final Size preferredSize =
+        _sliderTheme.thumbShape.getPreferredSize(isInteractive, (_divisions != null));
     return math.max(preferredSize.width, preferredSize.height) / 2.0;
   }
 
@@ -784,8 +778,7 @@ class _RenderRangeSlider extends RenderBox {
   void _updateValueIndicatorPainter() {
     if (_showValueIndicator != false) {
       _valueIndicatorPainter
-        ..text =
-            new TextSpan(style: _sliderTheme.valueIndicatorTextStyle, text: '')
+        ..text = new TextSpan(style: _sliderTheme.valueIndicatorTextStyle, text: '')
         ..textDirection = TextDirection.ltr
         ..layout();
     } else {
@@ -832,9 +825,7 @@ class _RenderRangeSlider extends RenderBox {
   void performResize() {
     size = new Size(
       constraints.hasBoundedWidth ? constraints.maxWidth : _preferredTotalWidth,
-      constraints.hasBoundedHeight
-          ? constraints.maxHeight
-          : _overlayDiameter * 2.0,
+      constraints.hasBoundedHeight ? constraints.maxHeight : _overlayDiameter * 2.0,
     );
   }
 
@@ -851,11 +842,8 @@ class _RenderRangeSlider extends RenderBox {
   @override
   double computeMinIntrinsicWidth(double height) {
     return 2 *
-        math.max(
-            _overlayDiameter,
-            _sliderTheme.thumbShape
-                .getPreferredSize(true, (_divisions != null))
-                .width);
+        math.max(_overlayDiameter,
+            _sliderTheme.thumbShape.getPreferredSize(true, (_divisions != null)).width);
   }
 
   @override
@@ -865,20 +853,14 @@ class _RenderRangeSlider extends RenderBox {
 
   @override
   double computeMinIntrinsicHeight(double width) {
-    return math.max(
-        _overlayDiameter,
-        _sliderTheme.thumbShape
-            .getPreferredSize(true, (_divisions != null))
-            .height);
+    return math.max(_overlayDiameter,
+        _sliderTheme.thumbShape.getPreferredSize(true, (_divisions != null)).height);
   }
 
   @override
   double computeMaxIntrinsicHeight(double width) {
-    return math.max(
-        _overlayDiameter,
-        _sliderTheme.thumbShape
-            .getPreferredSize(true, (_divisions != null))
-            .height);
+    return math.max(_overlayDiameter,
+        _sliderTheme.thumbShape.getPreferredSize(true, (_divisions != null)).height);
   }
 
   // ---------------------------------------------
@@ -937,8 +919,7 @@ class _RenderRangeSlider extends RenderBox {
     if (_lowerValue > 0.0) {
       // Draw the unselected left range
       canvas.drawRect(
-          new Rect.fromLTRB(
-              _trackLeft, _trackTop, _thumbLeftPosition, _trackBottom),
+          new Rect.fromLTRB(_trackLeft, _trackTop, _thumbLeftPosition, _trackBottom),
           unselectedTrackPaint);
     }
     // Draw the selected range
@@ -950,8 +931,7 @@ class _RenderRangeSlider extends RenderBox {
     if (_upperValue < 1.0) {
       // Draw the unselected right range
       canvas.drawRect(
-          new Rect.fromLTRB(
-              _thumbRightPosition, _trackTop, _trackRight, _trackBottom),
+          new Rect.fromLTRB(_thumbRightPosition, _trackTop, _trackRight, _trackBottom),
           unselectedTrackPaint);
     }
   }
@@ -960,8 +940,7 @@ class _RenderRangeSlider extends RenderBox {
   // Paint the overlay
   // ---------------------------------------------
   void _paintOverlay(Canvas canvas) {
-    if (!_overlayAnimation.isDismissed &&
-        _previousActiveThumb != _ActiveThumb.none) {
+    if (!_overlayAnimation.isDismissed && _previousActiveThumb != _ActiveThumb.none) {
       final Paint overlayPaint = new Paint()..color = _sliderTheme.overlayColor;
       final double radius = _overlayRadiusTween.evaluate(_overlayAnimation);
 
@@ -988,7 +967,8 @@ class _RenderRangeSlider extends RenderBox {
 
     for (int i = 0; i <= _divisions; i++) {
       final double left = _trackLeft + i * dx;
-      final Offset center = Offset(left + _tickOffset, _trackTop + _tickOffset + (_sliderTheme.trackHeight > 2.0 ? 1.0 : 0.0));
+      final Offset center = Offset(left + _tickOffset,
+          _trackTop + _tickOffset + (_sliderTheme.trackHeight > 2.0 ? 1.0 : 0.0));
 
       canvas.drawCircle(
           center,
@@ -1007,16 +987,14 @@ class _RenderRangeSlider extends RenderBox {
   Rect _thumbUpperRect;
 
   void _paintThumbs(PaintingContext context, Offset offset) {
-    final Offset thumbLowerCenter =
-        new Offset(_thumbLeftPosition, _trackVerticalCenter);
-    final Offset thumbUpperCenter =
-        new Offset(_thumbRightPosition, _trackVerticalCenter);
+    final Offset thumbLowerCenter = new Offset(_thumbLeftPosition, _trackVerticalCenter);
+    final Offset thumbUpperCenter = new Offset(_thumbRightPosition, _trackVerticalCenter);
     final double thumbRadius = _thumbRadius;
 
-    _thumbLowerRect = new Rect.fromCircle(
-        center: thumbLowerCenter - offset, radius: thumbRadius);
-    _thumbUpperRect = new Rect.fromCircle(
-        center: thumbUpperCenter - offset, radius: thumbRadius);
+    _thumbLowerRect =
+        new Rect.fromCircle(center: thumbLowerCenter - offset, radius: thumbRadius);
+    _thumbUpperRect =
+        new Rect.fromCircle(center: thumbUpperCenter - offset, radius: thumbRadius);
 
     // Paint the thumbs, via the Theme
     _sliderTheme.thumbShape.paint(
@@ -1081,8 +1059,7 @@ class _RenderRangeSlider extends RenderBox {
             textValue = _valueIndicatorFormatter(index, value);
           } catch (_) {}
         }
-        textValue =
-            textValue ?? value.toStringAsFixed(_valueIndicatorMaxDecimals);
+        textValue = textValue ?? value.toStringAsFixed(_valueIndicatorMaxDecimals);
 
         // Adapt the value indicator with the active thumb value
         _valueIndicatorPainter
@@ -1253,9 +1230,10 @@ class _RenderRangeSlider extends RenderBox {
     var _thumbUpperExpandedRect = Rect.fromCircle(
         center: _thumbUpperRect.centerRight,
         radius: _thumbRadius * _touchRadiusExpansionRatio);
-    double divisionOffset = (_divisions != null)
+    double calculatedDivisionOffset = (_divisions != null)
         ? _discretize(1.0 / _divisions)
         : (_thumbRadius * 2.0) / _trackLength;
+    double divisionOffset = _allowThumbOverlap ? 0 : calculatedDivisionOffset;
 
     if (_thumbLowerExpandedRect.contains(position)) {
       _activeThumb = _ActiveThumb.lowerThumb;
