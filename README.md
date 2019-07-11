@@ -19,15 +19,21 @@ A full explanation on how to build such Widget may be found on my blog:
 You should ensure that you add the following dependency in your Flutter project.
 ```yaml
 dependencies:
- flutter_range_slider: "^1.3.0"
+ flutter_range_slider: "^1.3.1"
 ```
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.
 
 In your Dart code, to use it:
 ```dart
-import 'package:flutter_range_slider/flutter_range_slider.dart';
+import 'package:flutter_range_slider/flutter_range_slider.dart' as frs;
 ```
+
+> **IMPORTANT NOTE**
+<br/>
+> As of version 1.7, Flutter Framework also has its own RangeSlider.
+> If you want to keep working with this library, you need to import the package, using an alias e.g. frs.
+> Then, your need to prefix both RangeSlider and RangeSliderCallback with this alias (frs.RangeSlider and frs.RangeSliderCallback)
 
 ---
 ## Example

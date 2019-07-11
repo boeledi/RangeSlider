@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_range_slider/flutter_range_slider.dart';
+import 'package:flutter_range_slider/flutter_range_slider.dart' as frs;
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'RangeSlider Demo',
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new RangeSliderSample(),
+      home: RangeSliderSample(),
     );
   }
 }
@@ -39,93 +39,93 @@ class _RangeSliderSampleState extends State<RangeSliderSample> {
 
   @override
   Widget build(BuildContext context) {
-    return new SafeArea(
+    return SafeArea(
       top: false,
       bottom: false,
-      child: new Scaffold(
-        appBar: new AppBar(title: new Text('RangeSlider Demo')),
-        body: new Container(
+      child: Scaffold(
+        appBar: AppBar(title: Text('RangeSlider Demo')),
+        body: Container(
           padding: const EdgeInsets.only(top: 50.0, left: 10.0, right: 10.0),
-          child: new Column(
-              children: <Widget>[]
-                ..add(
-                  //
-                  // Simple example
-                  //
-                  new RangeSlider(
-                    min: 0.0,
-                    max: 100.0,
-                    lowerValue: _lowerValue,
-                    upperValue: _upperValue,
-                    divisions: 5,
-                    showValueIndicator: true,
-                    valueIndicatorMaxDecimals: 1,
-                    onChanged: (double newLowerValue, double newUpperValue) {
-                      setState(() {
-                        _lowerValue = newLowerValue;
-                        _upperValue = newUpperValue;
-                      });
-                    },
-                    onChangeStart:
-                        (double startLowerValue, double startUpperValue) {
-                      print(
-                          'Started with values: $startLowerValue and $startUpperValue');
-                    },
-                    onChangeEnd: (double newLowerValue, double newUpperValue) {
-                      print(
-                          'Ended with values: $newLowerValue and $newUpperValue');
-                    },
-                  ),
-                )
-                // Add some space
-                ..add(
-                  new SizedBox(height: 24.0),
-                )
+          child: Column(
+            children: <Widget>[]
+              ..add(
                 //
-                // Add a series of RangeSliders, built as regular Widgets
-                // each one having some specific customizations
+                // Simple example
                 //
-                ..addAll(_buildRangeSliders())
-
-                //
-                // Add a disabled version
-                //
-                ..add(
-                  new RangeSlider(
-                      min: 0.0,
-                      max: 100.0,
-                      lowerValue: 25.0,
-                      upperValue: 50.0,
-                      divisions: 5,
-                      showValueIndicator: true,
-                      valueIndicatorMaxDecimals: 1,
-                      onChanged: null,
-                    ),
-                )
-
-                //
-                // Add custom value formatter
-                //
-                ..add(
-                  new RangeSlider(
-                      min: 0.0,
-                      max: 100.0,
-                      lowerValue: _lowerValueFormatter,
-                      upperValue: _upperValueFormatter,
-                      divisions: 10,
-                      showValueIndicator: true,
-                      valueIndicatorFormatter: (int index, double value){
-                        String twoDecimals = value.toStringAsFixed(2);
-                        return '$twoDecimals mm';
-                      },
-                      onChanged: (double newLowerValue, double newUpperValue) {
-                        setState(() {
-                          _lowerValueFormatter = newLowerValue;
-                          _upperValueFormatter = newUpperValue;
-                        });
-                      },
-                    ),
+                frs.RangeSlider(
+                  min: 0.0,
+                  max: 100.0,
+                  lowerValue: _lowerValue,
+                  upperValue: _upperValue,
+                  divisions: 5,
+                  showValueIndicator: true,
+                  valueIndicatorMaxDecimals: 1,
+                  onChanged: (double newLowerValue, double newUpperValue) {
+                    setState(() {
+                      _lowerValue = newLowerValue;
+                      _upperValue = newUpperValue;
+                    });
+                  },
+                  onChangeStart:
+                      (double startLowerValue, double startUpperValue) {
+                    print(
+                        'Started with values: $startLowerValue and $startUpperValue');
+                  },
+                  onChangeEnd: (double newLowerValue, double newUpperValue) {
+                    print(
+                        'Ended with values: $newLowerValue and $newUpperValue');
+                  },
                 ),
+              )
+              // Add some space
+              ..add(
+                SizedBox(height: 24.0),
+              )
+              //
+              // Add a series of RangeSliders, built as regular Widgets
+              // each one having some specific customizations
+              //
+              ..addAll(_buildRangeSliders())
+
+              //
+              // Add a disabled version
+              //
+              ..add(
+                frs.RangeSlider(
+                  min: 0.0,
+                  max: 100.0,
+                  lowerValue: 25.0,
+                  upperValue: 50.0,
+                  divisions: 5,
+                  showValueIndicator: true,
+                  valueIndicatorMaxDecimals: 1,
+                  onChanged: null,
+                ),
+              )
+
+              //
+              // Add custom value formatter
+              //
+              ..add(
+                frs.RangeSlider(
+                  min: 0.0,
+                  max: 100.0,
+                  lowerValue: _lowerValueFormatter,
+                  upperValue: _upperValueFormatter,
+                  divisions: 10,
+                  showValueIndicator: true,
+                  valueIndicatorFormatter: (int index, double value) {
+                    String twoDecimals = value.toStringAsFixed(2);
+                    return '$twoDecimals mm';
+                  },
+                  onChanged: (double newLowerValue, double newUpperValue) {
+                    setState(() {
+                      _lowerValueFormatter = newLowerValue;
+                      _upperValueFormatter = newUpperValue;
+                    });
+                  },
+                ),
+              ),
           ),
         ),
       ),
@@ -148,7 +148,7 @@ class _RangeSliderSampleState extends State<RangeSliderSample> {
         });
       }));
       // Add an extra padding at the bottom of each RangeSlider
-      children.add(new SizedBox(height: 8.0));
+      children.add(SizedBox(height: 8.0));
     }
 
     return children;
@@ -256,20 +256,20 @@ class RangeSliderData {
   // Builds a RangeSlider and customizes the theme
   // based on parameters
   //
-  Widget build(BuildContext context, RangeSliderCallback callback) {
-    return new Container(
+  Widget build(BuildContext context, frs.RangeSliderCallback callback) {
+    return Container(
       width: double.infinity,
-      child: new Row(
+      child: Row(
         children: <Widget>[
-          new Container(
-            constraints: new BoxConstraints(
+          Container(
+            constraints: BoxConstraints(
               minWidth: 40.0,
               maxWidth: 40.0,
             ),
-            child: new Text(lowerValueText),
+            child: Text(lowerValueText),
           ),
-          new Expanded(
-            child: new SliderTheme(
+          Expanded(
+            child: SliderTheme(
               // Customization of the SliderTheme
               // based on individual definitions
               // (see rangeSliders in _RangeSliderSampleState)
@@ -285,7 +285,7 @@ class RangeSliderData {
                     ? ShowValueIndicator.always
                     : ShowValueIndicator.onlyForDiscrete,
               ),
-              child: new RangeSlider(
+              child: frs.RangeSlider(
                 min: min,
                 max: max,
                 lowerValue: lowerValue,
@@ -300,12 +300,12 @@ class RangeSliderData {
               ),
             ),
           ),
-          new Container(
-            constraints: new BoxConstraints(
+          Container(
+            constraints: BoxConstraints(
               minWidth: 40.0,
               maxWidth: 40.0,
             ),
-            child: new Text(upperValueText),
+            child: Text(upperValueText),
           ),
         ],
       ),

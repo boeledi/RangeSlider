@@ -36,3 +36,7 @@
 ## [1.3.0] - 2019-06-11
 
 - fix [#19] - support for SliderTheme.trackHeight
+
+## [1.3.1] - 2019-07-11
+
+- as of version Flutter v1.7, the Flutter framework also offers its own **RangeSlider**, if you want to continue using this version, you need to use an alias when importing the package (see Readme and example)
