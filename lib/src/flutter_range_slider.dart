@@ -89,8 +89,8 @@ class RangeSlider extends StatefulWidget {
   /// A fine-grained control of the appearance is achieved using a [SliderThemeData].
   const RangeSlider({
     Key key,
-    this.min: 0.0,
-    this.max: 1.0,
+    this.min = 0.0,
+    this.max = 1.0,
     this.divisions,
     @required this.lowerValue,
     @required this.upperValue,
@@ -98,9 +98,10 @@ class RangeSlider extends StatefulWidget {
     this.onChangeStart,
     this.onChangeEnd,
     this.showValueIndicator: false,
-    this.touchRadiusExpansionRatio: 3.33,
-    this.valueIndicatorMaxDecimals: 1,
+    this.touchRadiusExpansionRatio = 3.33,
+    this.valueIndicatorMaxDecimals = 1,
     this.valueIndicatorFormatter,
+    this.allowThumbOverlap = false,
   })  : assert(min != null),
         assert(max != null),
         assert(min <= max),
@@ -294,6 +295,11 @@ class RangeSlider extends StatefulWidget {
   ///    begins.
   final RangeSliderCallback onChangeEnd;
 
+  ///
+  /// Allows thumbs to overlap (default: false)
+  ///
+  final bool allowThumbOverlap;
+
   @override
   _RangeSliderState createState() => _RangeSliderState();
 
@@ -481,6 +487,7 @@ class _RangeSliderState extends State<RangeSlider>
       valueIndicatorMaxDecimals: widget.valueIndicatorMaxDecimals,
       touchRadiusExpansionRatio: widget.touchRadiusExpansionRatio,
       valueIndicatorFormatter: widget.valueIndicatorFormatter,
+      allowThumbOverlap: widget.allowThumbOverlap,
     );
   }
 }
@@ -503,6 +510,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
     this.valueIndicatorMaxDecimals,
     this.touchRadiusExpansionRatio,
     this.valueIndicatorFormatter,
+    this.allowThumbOverlap,
   }) : super(key: key);
 
   final _RangeSliderState state;
@@ -517,6 +525,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   final int valueIndicatorMaxDecimals;
   final double touchRadiusExpansionRatio;
   final RangeSliderValueIndicatorFormatter valueIndicatorFormatter;
+  final bool allowThumbOverlap;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -533,6 +542,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       valueIndicatorMaxDecimals: valueIndicatorMaxDecimals,
       touchRadiusExpansionRatio: touchRadiusExpansionRatio,
       valueIndicatorFormatter: valueIndicatorFormatter,
+      allowThumbOverlap: allowThumbOverlap,
     );
   }
 
@@ -550,7 +560,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..showValueIndicator = showValueIndicator
       ..valueIndicatorMaxDecimals = valueIndicatorMaxDecimals
       ..touchRadiusExpansionRatio = touchRadiusExpansionRatio
-      ..valueIndicatorFormatter = valueIndicatorFormatter;
+      ..valueIndicatorFormatter = valueIndicatorFormatter
+      ..allowThumbOverlap = allowThumbOverlap;
   }
 }
 
@@ -572,6 +583,7 @@ class _RenderRangeSlider extends RenderBox {
     int valueIndicatorMaxDecimals,
     double touchRadiusExpansionRatio,
     RangeSliderValueIndicatorFormatter valueIndicatorFormatter,
+    bool allowThumbOverlap,
   }) {
     // Initialization
     this.divisions = divisions;
@@ -585,6 +597,7 @@ class _RenderRangeSlider extends RenderBox {
     this.valueIndicatorMaxDecimals = valueIndicatorMaxDecimals;
     this._touchRadiusExpansionRatio = touchRadiusExpansionRatio;
     this.valueIndicatorFormatter = valueIndicatorFormatter;
+    this.allowThumbOverlap = allowThumbOverlap;
 
     // Initialization of the Drag Gesture Recognizer
     _drag = HorizontalDragGestureRecognizer()
@@ -643,6 +656,7 @@ class _RenderRangeSlider extends RenderBox {
   int _valueIndicatorMaxDecimals;
   final TextPainter _valueIndicatorPainter = TextPainter();
   RangeSliderValueIndicatorFormatter _valueIndicatorFormatter;
+  bool _allowThumbOverlap;
 
   // --------------------------------------------------
   // Setters
@@ -738,6 +752,10 @@ class _RenderRangeSlider extends RenderBox {
 
   set valueIndicatorFormatter(RangeSliderValueIndicatorFormatter formatter) {
     _valueIndicatorFormatter = formatter;
+  }
+
+  set allowThumbOverlap(bool value) {
+    _allowThumbOverlap = value;
   }
 
   // ----------------------------------------------
@@ -1256,9 +1274,10 @@ class _RenderRangeSlider extends RenderBox {
     var _thumbUpperExpandedRect = Rect.fromCircle(
         center: _thumbUpperRect.centerRight,
         radius: _thumbRadius * _touchRadiusExpansionRatio);
-    double divisionOffset = (_divisions != null)
+    double calculatedDivisionOffset = (_divisions != null)
         ? _discretize(1.0 / _divisions)
         : (_thumbRadius * 2.0) / _trackLength;
+    double divisionOffset = _allowThumbOverlap ? 0.0 : calculatedDivisionOffset;
 
     if (_thumbLowerExpandedRect.contains(position)) {
       _activeThumb = _ActiveThumb.lowerThumb;
