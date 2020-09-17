@@ -2,7 +2,7 @@
 
 An extension of the Flutter Material Slider to allow selection of a range of values via 2 thumbs.
 
-<img src="https://www.didierboelens.com/images/range_slider.gif" width="220" alt="Flutter RangeSlider" />
+<img src="https://www.didierboelens.com/images/blog/range_slider.gif" width="220" alt="Flutter RangeSlider" />
 <br/><br/>
 
 ---
