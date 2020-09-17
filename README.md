@@ -19,7 +19,7 @@ A full explanation on how to build such Widget may be found on my blog:
 You should ensure that you add the following dependency in your Flutter project.
 ```yaml
 dependencies:
- flutter_range_slider: "^1.4.0"
+ flutter_range_slider: "^1.5.0"
 ```
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.

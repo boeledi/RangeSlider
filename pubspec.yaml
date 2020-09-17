@@ -1,7 +1,6 @@
 name: flutter_range_slider
 description: a 2-thumb Material Design range slider for Flutter that allows a range selection
-version: 1.4.0
-author: Didier Boelens <mail@didierboelens.com>
+version: 1.5.0
 homepage: https://github.com/boeledi/RangeSlider
 
 environment:
@@ -16,9 +15,3 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
-
-  # To add assets to your package, add an assets section, like this:
-  # assets:
-  #  - images/a_dot_burr.jpeg
-  #  - images/a_dot_ham.jpeg
-  #

@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Didier Boelens. All rights reserved.
+// Copyright 2018-2020 Didier Boelens. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -529,6 +529,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) {
+
     return _RenderRangeSlider(
       lowerValue: lowerValue,
       upperValue: upperValue,
@@ -543,6 +544,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       touchRadiusExpansionRatio: touchRadiusExpansionRatio,
       valueIndicatorFormatter: valueIndicatorFormatter,
       allowThumbOverlap: allowThumbOverlap,
+      sizeWithOverflow: MediaQuery.of(context).size,
     );
   }
 
@@ -584,6 +586,7 @@ class _RenderRangeSlider extends RenderBox {
     double touchRadiusExpansionRatio,
     RangeSliderValueIndicatorFormatter valueIndicatorFormatter,
     bool allowThumbOverlap,
+    Size sizeWithOverflow,
   }) {
     // Initialization
     this.divisions = divisions;
@@ -598,6 +601,7 @@ class _RenderRangeSlider extends RenderBox {
     this._touchRadiusExpansionRatio = touchRadiusExpansionRatio;
     this.valueIndicatorFormatter = valueIndicatorFormatter;
     this.allowThumbOverlap = allowThumbOverlap;
+    this.sizeWithOverflow = sizeWithOverflow;
 
     // Initialization of the Drag Gesture Recognizer
     _drag = HorizontalDragGestureRecognizer()
@@ -657,6 +661,7 @@ class _RenderRangeSlider extends RenderBox {
   final TextPainter _valueIndicatorPainter = TextPainter();
   RangeSliderValueIndicatorFormatter _valueIndicatorFormatter;
   bool _allowThumbOverlap;
+  Size sizeWithOverflow;
 
   // --------------------------------------------------
   // Setters
@@ -1051,6 +1056,7 @@ class _RenderRangeSlider extends RenderBox {
       activationAnimation: _valueIndicatorAnimation,
       labelPainter: _valueIndicatorPainter,
       textDirection: TextDirection.ltr,
+      sizeWithOverflow: sizeWithOverflow,
     );
 
     _sliderTheme.thumbShape.paint(
@@ -1064,6 +1070,7 @@ class _RenderRangeSlider extends RenderBox {
       activationAnimation: _valueIndicatorAnimation,
       labelPainter: _valueIndicatorPainter,
       textDirection: TextDirection.ltr,
+      sizeWithOverflow: sizeWithOverflow,
     );
   }
 
@@ -1125,6 +1132,8 @@ class _RenderRangeSlider extends RenderBox {
           sliderTheme: _sliderTheme,
           value: value,
           textDirection: TextDirection.ltr,
+          sizeWithOverflow: sizeWithOverflow,
+          textScaleFactor: 1.0,
         );
       }
     }

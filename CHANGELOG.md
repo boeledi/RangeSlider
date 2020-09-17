@@ -44,3 +44,7 @@
 ## [1.4.0] - 2019-09-03
 
 - additional parameter to allow Thumbs to overlap
+- 
+## [1.5.0] - 2020-09-16
+
+- alignment with Flutter v1.20
