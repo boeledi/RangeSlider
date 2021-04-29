@@ -24,18 +24,12 @@ class RangeSliderSample extends StatefulWidget {
 
 class _RangeSliderSampleState extends State<RangeSliderSample> {
   // List of RangeSliders to use, together with their parameters
-  List<RangeSliderData> rangeSliders;
+  late final List<RangeSliderData> rangeSliders = _rangeSliderDefinitions();
 
   double _lowerValue = 20.0;
   double _upperValue = 80.0;
   double _lowerValueFormatter = 20.0;
   double _upperValueFormatter = 20.0;
-
-  @override
-  void initState() {
-    super.initState();
-    rangeSliders = _rangeSliderDefinitions();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +161,7 @@ class _RangeSliderSampleState extends State<RangeSliderSample> {
           lowerValue: 25.0,
           upperValue: 75.0,
           divisions: 20,
-          overlayColor: Colors.red[100]),
+          overlayColor: Colors.red[100]!),
       RangeSliderData(
           min: 0.0,
           max: 100.0,
@@ -183,7 +177,7 @@ class _RangeSliderSampleState extends State<RangeSliderSample> {
           showValueIndicator: true,
           valueIndicatorMaxDecimals: 0,
           activeTrackColor: Colors.red,
-          inactiveTrackColor: Colors.red[50],
+          inactiveTrackColor: Colors.red[50]!,
           valueIndicatorColor: Colors.green),
       RangeSliderData(
           min: 0.0,
@@ -210,7 +204,7 @@ class RangeSliderData {
   double max;
   double lowerValue;
   double upperValue;
-  int divisions;
+  int? divisions;
   bool showValueIndicator;
   int valueIndicatorMaxDecimals;
   bool forceValueIndicator;
@@ -229,10 +223,10 @@ class RangeSliderData {
   static const Color defaultOverlayColor = const Color(0x290175c2);
 
   RangeSliderData({
-    this.min,
-    this.max,
-    this.lowerValue,
-    this.upperValue,
+    required this.min,
+    required this.max,
+    required this.lowerValue,
+    required this.upperValue,
     this.divisions,
     this.showValueIndicator: true,
     this.valueIndicatorMaxDecimals: 1,
