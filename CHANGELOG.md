@@ -48,3 +48,7 @@
 ## [1.5.0] - 2020-09-16
 
 - alignment with Flutter v1.20
+
+## [1.6.0] - 2021-04-29
+
+- Migrato to null safety. Flutter v2.0
